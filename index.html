@@ -1,0 +1,174 @@
+<!----------------------READ ME -------------------->
+<head>
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css">
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script src="https://use.fontawesome.com/7f55a49b51.js"></script>
+</head>
+
+
+<!---------------------END---------------------------->
+<!-- Main content -->
+<section class="content">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box">
+                <div class="box-header with-border"> 
+                   <div class="col-sm-4">
+                       <a class="btn btn-sm pull-right export" data-toggle="tooltip" title="Download Csv" ><i class="fa fa-file-excel-o" style="color: #0b5382;font-size: 22px;"></i></a>
+                    </div>
+                </div> 
+                <div class="box-body" style="min-height:400px;" id="mydiv">
+					<center>
+							<table id="example1" class="table table-bordered table-striped">
+                        <thead>
+                                <tr>
+                                    <td style="color:#5a4684 !important;background: rgba(239, 238, 238, 0.33) !important;font-weight: bold" class="sorting">Id</td>
+                                    <td style="color:#5a4684 !important;background: rgba(239, 238, 238, 0.33) !important;font-weight: bold" class="sorting">Name</td>
+                                    <td style="color:#5a4684 !important;background: rgba(239, 238, 238, 0.33) !important;font-weight: bold" class="sorting">Pincode</td>
+                                    <td style="color:#5a4684 !important;background: rgba(239, 238, 238, 0.33) !important;font-weight: bold;text-align:center;" class="sorting">Mobile Number</td>
+                                    <td style="color:#5a4684 !important;background: rgba(239, 238, 238, 0.33) !important;font-weight: bold;text-align:center;" class="sorting">Status</td>
+									<td style="color:#5a4684 !important;background: rgba(239, 238, 238, 0.33) !important;font-weight: bold;text-align:center;" class="sorting">Gender</td>
+                                </tr>
+                            </thead> 
+                            <!-------------Condition for No Records Found-------
+							<?php if (count($condition) == 0) { ?>
+                                <tbody>
+                                    <tr>
+                                        <td colspan="6"> <h4 class="text-center"> No Records Found.... </h4></td>
+                                    </tr>
+                                </tbody>
+                            <?php } ?>--> 
+                            <tbody> 
+                                <?php// Dynamic Data foreach loop --------foreach ():  ?>
+                                    <tr>
+                                        <td>One</td>
+										<td>Naresh</td>
+										<td>516360</td>
+										<td>8309973127</td>
+										<td>Active</td>
+										<td>Male</td>
+                                    </tr>
+									<tr>
+                                        <td>Two</td>
+										<td>Naresh K</td>
+										<td>516360</td>
+										<td>8309973127</td>
+										<td>Active</td>
+										<td>Male</td>
+                                    </tr>
+									<tr>
+                                        <td>Three</td>
+										<td>Naresh KURUKUTI</td>
+										<td>516360</td>
+										<td>8309973127</td>
+										<td>Active</td>
+										<td>Male</td>
+                                    </tr>
+									<tr>
+                                        <td>Three</td>
+										<td>KURUKUTI Naresh </td>
+										<td>516360</td>
+										<td>8309973127</td>
+										<td>Active</td>
+										<td>Male</td>
+                                    </tr>
+                                <?php //endforeach; ?>
+                            </tbody>  
+                    </table>
+					</center>  
+                </div>
+                 <div class="box-footer">
+                         
+				</div>
+            </div> 
+        </div> 
+    </div> 
+</section>
+<script> 
+$(document).ready(function() { 
+  function exportTableToCSV($table, filename) {
+	var $rows = $table.find('tr:has(td)'); 
+	//var $rows = document.querySelectorAll("#mydiv table tr");
+
+      // Temporary delimiter characters unlikely to be typed by keyboard
+      // This is to avoid accidentally splitting the actual contents
+      tmpColDelim = String.fromCharCode(11), // vertical tab character
+      tmpRowDelim = String.fromCharCode(0), // null character
+
+      // actual delimiter characters for CSV format
+      colDelim = '","',
+      rowDelim = '"\r\n"',
+
+      // Grab text from table into CSV formatted string
+      csv = '"' + $rows.map(function(i, row) {
+			
+			
+		  var $row = $(row),
+          $cols = $row.find('td');
+
+        return $cols.map(function(j, col) {
+          var $col = $(col),
+            text = $col.text().trim();
+			//xt = trim(text);
+				console.log('trim(row);', text); 
+          return text.replace(/"/g, '""'); // escape double quotes
+		  
+        }).get().join(tmpColDelim);
+
+      }).get().join(tmpRowDelim)
+      .split(tmpRowDelim).join(rowDelim)
+      .split(tmpColDelim).join(colDelim) + '"';
+
+    // Deliberate 'false', see comment below
+    if (false && window.navigator.msSaveBlob) {
+
+      var blob = new Blob([decodeURIComponent(csv)], {
+        type: 'text/csv;charset=utf8'
+      });
+
+      // Crashes in IE 10, IE 11 and Microsoft Edge
+      // See MS Edge Issue #10396033
+      // Hence, the deliberate 'false'
+      // This is here just for completeness
+      // Remove the 'false' at your own risk
+      window.navigator.msSaveBlob(blob, filename);
+
+    } else if (window.Blob && window.URL) {
+      // HTML5 Blob        
+      var blob = new Blob([csv], {
+        type: 'text/csv;charset=utf-8'
+      });
+      var csvUrl = URL.createObjectURL(blob);
+
+      $(this)
+        .attr({
+          'download': filename,
+          'href': csvUrl
+        });
+    } else {
+      // Data URI
+      var csvData = 'data:application/csv;charset=utf-8,' + encodeURIComponent(csv);
+
+      $(this)
+        .attr({
+          'download': filename,
+          'href': csvData,
+          'target': '_blank'
+        });
+    }
+  }
+
+  // This must be a hyperlink
+  $(".export").on('click', function(event) {
+    // CSV
+    var args = [$('#mydiv>table'), 'StudentDetail.csv'];
+
+    exportTableToCSV.apply(this, args);
+
+    // If CSV, don't do event.preventDefault() or return false
+    // We actually need this to be a typical hyperlink
+  });
+});
+</script>
